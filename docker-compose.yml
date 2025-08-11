@@ -1,0 +1,119 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: hmis-postgres
+    environment:
+      POSTGRES_DB: hmis_core
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./core/internal/database/migrations:/docker-entrypoint-initdb.d
+    networks:
+      - hmis-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d hmis_core"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: hmis-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - hmis-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+  # HMIS Core Backend
+  hmis-core:
+    build:
+      context: ./core
+      dockerfile: Dockerfile
+    container_name: hmis-core
+    ports:
+      - "8082:8082"
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=root
+      - DB_NAME=hmis_core
+      - DB_SSLMODE=disable
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - GIN_MODE=release
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - hmis-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8082/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    volumes:
+      - ./core/logs:/app/logs
+      - ./core/uploads:/app/uploads
+
+  # Frontend Application
+  hmis-frontend:
+    build:
+      context: ./apps/web/patient-registration
+      dockerfile: Dockerfile
+    container_name: hmis-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8082/api
+      - REACT_APP_ENV=production
+      - NODE_ENV=production
+    depends_on:
+      hmis-core:
+        condition: service_healthy
+    networks:
+      - hmis-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  hmis-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
