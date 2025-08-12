@@ -8,8 +8,8 @@ import AddressInformationStep from './AddressInformationStep';
 import MedicalInformationStep from './MedicalInformationStep';
 import BiometricCaptureStep from './BiometricCaptureStep';
 import ConsentReviewStep from './ConsentReviewStep';
-import { RegistrationFormData, PatientAllergy } from '@/types/patient';
-import apiService from '@/services/api';
+import { RegistrationFormData, PatientAllergy } from '../../types/patient';
+import apiService from '../../services/api';
 
 const STEPS = [
   { id: 1, title: 'Basic Information', component: BasicInformationStep },

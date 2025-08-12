@@ -1,7 +1,7 @@
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { RegistrationFormData } from '@/types/patient';
+import { RegistrationFormData } from '../../types/patient';
 
 const BiometricCaptureStep: React.FC = () => {
   const { register, watch, setValue, formState: { errors } } = useFormContext<RegistrationFormData>();

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { RegistrationFormData } from '@/types/patient';
+import { RegistrationFormData } from '../../types/patient';
 
 const ConsentReviewStep: React.FC = () => {
   const { watch, setValue } = useFormContext<RegistrationFormData>();

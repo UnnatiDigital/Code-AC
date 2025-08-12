@@ -1,6 +1,6 @@
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
-import { RegistrationFormData } from '@/types/patient';
+import { RegistrationFormData } from '../../types/patient';
 
 const ContactInformationStep: React.FC = () => {
   const { register, formState: { errors } } = useFormContext<RegistrationFormData>();

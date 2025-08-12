@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { RegistrationFormData } from '@/types/patient';
+import { RegistrationFormData } from '../../types/patient';
 
 // PIN code to location mapping (simplified for demo)
 const PIN_CODE_DATA: { [key: string]: { state: string; district: string; subDistrict: string } } = {

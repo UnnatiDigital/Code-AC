@@ -3,8 +3,8 @@ import { useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
 import { MagnifyingGlassIcon, EyeIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
-import apiService from '@/services/api';
-import { Patient, PatientSearchCriteria } from '@/types/patient';
+import apiService from '../services/api';
+import { Patient, PatientSearchCriteria } from '../types/patient';
 
 const PatientSearch: React.FC = () => {
   const [searchCriteria, setSearchCriteria] = useState<PatientSearchCriteria>({

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { RegistrationFormData, PatientAllergy } from '@/types/patient';
+import { RegistrationFormData, PatientAllergy } from '../../types/patient';
 
 const MedicalInformationStep: React.FC = () => {
   const { register, formState: { errors }, watch, setValue } = useFormContext<RegistrationFormData>();

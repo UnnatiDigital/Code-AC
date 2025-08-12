@@ -12,7 +12,7 @@ import {
   ChartBarIcon,
 } from '@heroicons/react/24/outline';
 
-import { apiService } from '@/services/api';
+import { apiService } from '../services/api';
 
 interface DashboardStats {
   totalPatients: number;
